@@ -82,21 +82,6 @@ services:
       timeout: 5s
       retries: 5
 
-  ai-search-db:
-    image: pgvector/pgvector:pg15
-    environment:
-      POSTGRES_DB: ai_search_db
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-    ports:
-      - "5437:5432"
-    volumes:
-      - ai_search_db_data:/var/lib/postgresql/data
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
 
   # Redis for caching and message queue
   redis:
@@ -119,9 +104,10 @@ services:
     environment:
       - SERVICES=s3
       - DEBUG=1
-      - DATA_DIR=/tmp/localstack/data
+      - DATA_DIR=/var/lib/localstack
     volumes:
-      - localstack_data:/tmp/localstack
+      - localstack_data:/var/lib/localstack
+      - /var/run/docker.sock:/var/run/docker.sock
 
   # Authentication Service
   auth-service:
@@ -251,30 +237,6 @@ services:
       - ./services/analytics-service:/app
     command: uvicorn src.main:app --host 0.0.0.0 --port 8000 --reload
 
-  # AI Search Service
-  ai-search-service:
-    build:
-      context: ./services/ai-search-service
-      dockerfile: Dockerfile
-    ports:
-      - "8006:8000"
-    environment:
-      - DATABASE_URL=postgresql://postgres:postgres@ai-search-db:5432/ai_search_db
-      - REDIS_URL=redis://redis:6379/5
-      - JWT_SECRET_KEY=your-super-secret-jwt-key-change-in-production
-      - JWT_ALGORITHM=HS256
-      - PRODUCT_SERVICE_URL=http://product-service:8000
-      - EMBEDDING_MODEL=all-MiniLM-L6-v2
-      - APP_NAME=AISearchService
-      - LOG_LEVEL=INFO
-    depends_on:
-      ai-search-db:
-        condition: service_healthy
-      redis:
-        condition: service_healthy
-    volumes:
-      - ./services/ai-search-service:/app
-    command: uvicorn src.main:app --host 0.0.0.0 --port 8000 --reload
 
 volumes:
   auth_db_data:
@@ -282,7 +244,6 @@ volumes:
   cart_db_data:
   payment_db_data:
   analytics_db_data:
-  ai_search_db_data:
   redis_data:
   localstack_data:
 

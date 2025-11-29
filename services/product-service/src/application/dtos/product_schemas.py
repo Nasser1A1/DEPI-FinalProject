@@ -71,7 +71,7 @@ class ProductCreate(BaseModel):
     price: Decimal = Field(..., gt=0, decimal_places=2)
     stock: int = Field(default=0, ge=0)
     category_id: Optional[UUID] = None
-    metadata: dict = Field(default_factory=dict)
+    product_metadata: dict = Field(default_factory=dict)
     is_active: bool = True
     
     @validator('price')
@@ -88,7 +88,7 @@ class ProductUpdate(BaseModel):
     price: Optional[Decimal] = Field(None, gt=0, decimal_places=2)
     stock: Optional[int] = Field(None, ge=0)
     category_id: Optional[UUID] = None
-    metadata: Optional[dict] = None
+    product_metadata: Optional[dict] = None
     is_active: Optional[bool] = None
     
     @validator('price')
@@ -106,7 +106,7 @@ class ProductResponse(BaseModel):
     price: Decimal
     stock: int
     category_id: Optional[UUID]
-    metadata: dict
+    product_metadata: dict
     is_active: bool
     in_stock: bool
     created_at: datetime

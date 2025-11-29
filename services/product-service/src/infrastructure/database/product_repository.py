@@ -82,7 +82,7 @@ class ProductRepository:
         description: Optional[str] = None,
         stock: int = 0,
         category_id: Optional[UUID] = None,
-        metadata: dict = None,
+        product_metadata: dict = None,
         is_active: bool = True
     ) -> Product:
         """Create a new product"""
@@ -92,7 +92,7 @@ class ProductRepository:
             price=price,
             stock=stock,
             category_id=category_id,
-            metadata=metadata or {},
+            product_metadata=product_metadata or {},
             is_active=is_active
         )
         self.db.add(product)

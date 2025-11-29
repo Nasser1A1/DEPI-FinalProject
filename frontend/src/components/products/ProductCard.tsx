@@ -3,7 +3,7 @@ import { ShoppingCart, Heart } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import Button from '@/components/ui/Button';
 import { Product } from '@/services/product.service';
-import { formatPrice, getPrimaryImage, truncate } from '@/utils/helpers';
+import { formatPrice, getPrimaryImage } from '@/utils/helpers';
 import { useCartStore } from '@/state/cart.store';
 import { useAuthStore } from '@/state/auth.store';
 import { toast } from 'react-hot-toast';

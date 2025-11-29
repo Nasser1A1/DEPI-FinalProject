@@ -16,6 +16,7 @@ import CheckoutPage from '@/pages/CheckoutPage';
 import LoginPage from '@/pages/auth/LoginPage';
 import RegisterPage from '@/pages/auth/RegisterPage';
 import ProfilePage from '@/pages/ProfilePage';
+import AdminProductsPage from '@/pages/admin/AdminProductsPage';
 
 // Protected Route Component
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
@@ -100,6 +101,14 @@ function App() {
                         element={
                             <ProtectedRoute>
                                 <ProfilePage />
+                            </ProtectedRoute>
+                        }
+                    />
+                    <Route
+                        path="admin/products"
+                        element={
+                            <ProtectedRoute>
+                                <AdminProductsPage />
                             </ProtectedRoute>
                         }
                     />

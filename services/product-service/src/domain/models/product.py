@@ -52,7 +52,7 @@ class Product(Base):
     price = Column(Numeric(10, 2), nullable=False, index=True)
     stock = Column(Integer, default=0, nullable=False)
     category_id = Column(UUID(as_uuid=True), ForeignKey('categories.id'), nullable=True, index=True)
-    metadata = Column(JSONB, default={})  # Brand, SKU, dimensions, etc.
+    product_metadata = Column(JSONB, default={})  # Brand, SKU, dimensions, etc.
     is_active = Column(Boolean, default=True, nullable=False, index=True)
     created_at = Column(DateTime, default=datetime.utcnow, nullable=False, index=True)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)
@@ -77,7 +77,7 @@ class Product(Base):
             "price": float(self.price),
             "stock": self.stock,
             "category_id": str(self.category_id) if self.category_id else None,
-            "metadata": self.metadata,
+            "product_metadata": self.product_metadata,
             "is_active": self.is_active,
             "in_stock": self.in_stock,
             "created_at": self.created_at.isoformat(),

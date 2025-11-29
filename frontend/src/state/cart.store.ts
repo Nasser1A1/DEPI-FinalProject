@@ -15,7 +15,7 @@ interface CartState {
     syncPrices: () => Promise<void>;
 }
 
-export const useCartStore = create<CartState>((set, get) => ({
+export const useCartStore = create<CartState>((set) => ({
     cart: null,
     isLoading: false,
 

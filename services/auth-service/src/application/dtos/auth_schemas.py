@@ -1,9 +1,10 @@
 """
 Pydantic schemas for authentication and user data transfer.
 """
-from pydantic import BaseModel, EmailStr, Field, validator
+from pydantic import BaseModel, EmailStr, Field, validator, field_serializer
 from typing import Optional
 from datetime import datetime
+from uuid import UUID
 import re
 
 
@@ -46,13 +47,18 @@ class RefreshTokenRequest(BaseModel):
 
 class UserResponse(BaseModel):
     """Response schema for user data"""
-    id: str
+    id: UUID
     email: str
     full_name: str
     is_active: bool
     is_verified: bool
     created_at: datetime
     updated_at: datetime
+    
+    @field_serializer('id')
+    def serialize_id(self, value: UUID) -> str:
+        """Convert UUID to string for JSON serialization"""
+        return str(value)
     
     class Config:
         from_attributes = True

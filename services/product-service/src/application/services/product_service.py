@@ -101,7 +101,7 @@ class ProductService:
             price=request.price,
             stock=request.stock,
             category_id=request.category_id,
-            metadata=request.metadata,
+            product_metadata=request.product_metadata,
             is_active=request.is_active
         )
         

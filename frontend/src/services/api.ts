@@ -1,3 +1,4 @@
+/// <reference types="vite/client" />
 import axios, { AxiosInstance, AxiosError, InternalAxiosRequestConfig } from 'axios';
 import { toast } from 'react-hot-toast';
 
@@ -28,8 +29,11 @@ apiClient.interceptors.request.use(
 apiClient.interceptors.response.use(
     (response) => response,
     async (error: AxiosError) => {
-        if (error.response?.status === 401) {
-            // Token expired or invalid
+        const requestUrl = error.config?.url || '';
+
+        // Only redirect to login for auth-specific 401 errors
+        if (error.response?.status === 401 && requestUrl.includes('/auth')) {
+            // Token expired or invalid - clear auth data
             sessionStorage.removeItem('access_token');
             sessionStorage.removeItem('refresh_token');
             sessionStorage.removeItem('user');
@@ -38,7 +42,7 @@ apiClient.interceptors.response.use(
             window.location.href = '/login';
         } else if (error.response?.status === 429) {
             toast.error('Too many requests. Please slow down.');
-        } else if (error.response?.status >= 500) {
+        } else if ((error.response?.status || 0) >= 500) {
             toast.error('Server error. Please try again later.');
         }
 

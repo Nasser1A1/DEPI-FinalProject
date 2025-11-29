@@ -1,6 +1,5 @@
 import { Outlet } from 'react-router-dom';
-import { motion } from 'framer-motion';
-import { ShoppingCart, User, LogOut, Search, Menu } from 'lucide-react';
+import { ShoppingCart, User, LogOut } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useAuthStore } from '@/state/auth.store';
 import { useCartStore } from '@/state/cart.store';
