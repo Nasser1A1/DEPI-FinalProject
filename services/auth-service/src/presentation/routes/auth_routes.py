@@ -1,7 +1,7 @@
 """
 Authentication routes/endpoints.
 """
-from fastapi import APIRouter, Depends, HTTPException, status, Request
+from fastapi import APIRouter, Depends, HTTPException, status, Request, UploadFile, File
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from sqlalchemy.orm import Session
 from src.infrastructure.database.connection import get_db
@@ -158,5 +158,57 @@ async def get_current_user(
     except ValueError as e:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
+            detail=str(e)
+        )
+
+
+@router.put("/profile-picture", response_model=UserResponse)
+@limiter.limit("10/minute")  # Moderate rate limit for upload
+async def upload_profile_picture(
+    request: Request,
+    file: UploadFile = File(...),
+    current_user_id: UUID = Depends(get_current_user_id),
+    db: Session = Depends(get_db)
+):
+    """
+    Upload profile picture for current user.
+    
+    Accepts image files (JPG, PNG, GIF) up to 5MB.
+    
+    Requires valid access token in Authorization header.
+    
+    **Rate Limit:** 10 requests per minute
+    """
+    # Validate file type
+    allowed_types = ["image/jpeg", "image/png", "image/gif", "image/jpg"]
+    if file.content_type not in allowed_types:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Invalid file type. Allowed types: {', '.join(allowed_types)}"
+        )
+    
+    # Validate file size (5MB max)
+    file_content = await file.read()
+    if len(file_content) > 5 * 1024 * 1024:  # 5MB
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="File size exceeds 5MB limit"
+        )
+    
+    # Reset file pointer for reading again
+    await file.seek(0)
+    
+    auth_service = AuthService(db)
+    
+    try:
+        user = await auth_service.update_profile_picture(
+            user_id=current_user_id,
+            file=file.file,
+            filename=file.filename
+        )
+        return user
+    except ValueError as e:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
             detail=str(e)
         )

@@ -17,6 +17,7 @@ class User(Base):
     email = Column(String(255), unique=True, nullable=False, index=True)
     password_hash = Column(String(255), nullable=False)
     full_name = Column(String(255), nullable=False)
+    profile_picture_url = Column(String(500), nullable=True)
     is_active = Column(Boolean, default=True, nullable=False)
     is_verified = Column(Boolean, default=False, nullable=False)
     created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
@@ -31,6 +32,7 @@ class User(Base):
             "id": str(self.id),
             "email": self.email,
             "full_name": self.full_name,
+            "profile_picture_url": self.profile_picture_url,
             "is_active": self.is_active,
             "is_verified": self.is_verified,
             "created_at": self.created_at.isoformat(),

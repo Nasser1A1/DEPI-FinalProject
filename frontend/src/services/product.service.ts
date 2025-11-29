@@ -4,7 +4,7 @@ export interface Product {
     id: string;
     title: string;
     description: string | null;
-    price: number;
+    price: string | number;  // API returns as string, needs conversion
     stock: number;
     category_id: string | null;
     product_metadata: Record<string, any>;

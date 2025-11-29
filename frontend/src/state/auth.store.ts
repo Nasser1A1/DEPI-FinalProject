@@ -12,6 +12,7 @@ interface AuthState {
     logout: () => Promise<void>;
     loadUser: () => void;
     refreshAuth: () => Promise<void>;
+    uploadProfilePicture: (file: File) => Promise<void>;
 }
 
 export const useAuthStore = create<AuthState>((set) => ({
@@ -72,6 +73,15 @@ export const useAuthStore = create<AuthState>((set) => ({
             set({ user, isAuthenticated: true });
         } catch (error) {
             set({ user: null, isAuthenticated: false });
+            throw error;
+        }
+    },
+
+    uploadProfilePicture: async (file: File) => {
+        try {
+            const updatedUser = await authService.uploadProfilePicture(file);
+            set({ user: updatedUser });
+        } catch (error) {
             throw error;
         }
     },

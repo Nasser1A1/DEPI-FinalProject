@@ -206,3 +206,51 @@ class AuthService:
             raise ValueError("User not found")
         
         return UserResponse.model_validate(user)
+    
+    async def update_profile_picture(self, user_id: UUID, file: any, filename: str) -> UserResponse:
+        """
+        Update user's profile picture.
+        
+        Args:
+            user_id: User's unique identifier
+            file: Image file to upload
+            filename: Original filename
+            
+        Returns:
+            Updated user data
+            
+        Raises:
+            ValueError: If user not found or upload fails
+        """
+        from src.infrastructure.storage.s3_client import s3_client
+        
+        # Get user
+        user = await self.user_repo.get_by_id(user_id)
+        if not user:
+            raise ValueError("User not found")
+        
+        # Delete old profile picture if exists
+        if user.profile_picture_url:
+            s3_client.delete_profile_picture(user.profile_picture_url)
+        
+        # Upload new profile picture
+        image_url = s3_client.upload_profile_picture(
+            file=file,
+            filename=filename,
+            user_id=str(user_id)
+        )
+        
+        if not image_url:
+            raise ValueError("Failed to upload profile picture")
+        
+        # Update user record
+        user.profile_picture_url = image_url
+        self.db.commit()
+        self.db.refresh(user)
+        
+        # Invalidate cache
+        from src.infrastructure.cache.redis_client import redis_client
+        redis_client.invalidate_user_cache(str(user_id))
+        
+        return UserResponse.model_validate(user)
+

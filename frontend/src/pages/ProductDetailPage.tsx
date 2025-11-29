@@ -162,7 +162,7 @@ export default function ProductDetailPage() {
 
           <div className="flex items-end gap-4">
             <span className="text-4xl font-bold text-primary-600">
-              ${product.price.toFixed(2)}
+              ${Number(product.price).toFixed(2)}
             </span>
             {product.stock <= 5 && product.stock > 0 && (
               <span className="text-orange-500 font-medium mb-1">

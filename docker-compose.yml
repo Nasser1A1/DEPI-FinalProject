@@ -13,7 +13,7 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -26,7 +26,7 @@ services:
     volumes:
       - redis_data:/data
     healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
+      test: [ "CMD", "redis-cli", "ping" ]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -136,10 +136,23 @@ services:
       - JWT_SECRET_KEY=your-super-secret-jwt-key-change-in-production
       - JWT_ALGORITHM=HS256
       - STRIPE_API_KEY=sk_test_mock_key
+      - STRIPE_SECRET_KEY=sk_test_mock_key
+      - STRIPE_PUBLISHABLE_KEY=pk_test_mock_key
       - STRIPE_WEBHOOK_SECRET=whsec_mock_secret
       - PAYMENT_MODE=mock
       - APP_NAME=PaymentService
       - LOG_LEVEL=INFO
+      - CART_SERVICE_URL=http://cart-service:8000
+      - AUTH_SERVICE_URL=http://auth-service:8000
+      - PRODUCT_SERVICE_URL=http://product-service:8000
+      - SMTP_HOST=localhost
+      - SMTP_PORT=1025
+      - SMTP_USER=user
+      - SMTP_PASSWORD=password
+      - EMAIL_FROM=noreply@example.com
+      - CELERY_BROKER_URL=redis://redis:6379/3
+      - CELERY_RESULT_BACKEND=redis://redis:6379/3
+      - ENCRYPTION_KEY=your-super-secret-encryption-key-32-chars
     depends_on:
       postgres:
         condition: service_healthy
@@ -172,11 +185,34 @@ services:
       - ./services/analytics-service:/app
     command: uvicorn src.main:app --host 0.0.0.0 --port 8000 --reload
 
+  # Order Service
+  order-service:
+    build:
+      context: ./services/order-service
+      dockerfile: Dockerfile
+    ports:
+      - "8006:8000"
+    environment:
+      - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/ecommerce_db
+      - REDIS_URL=redis://redis:6379/5
+      - JWT_SECRET_KEY=your-super-secret-jwt-key-change-in-production
+      - JWT_ALGORITHM=HS256
+      - APP_NAME=OrderService
+      - LOG_LEVEL=INFO
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    volumes:
+      - ./services/order-service:/app
+    command: uvicorn src.main:app --host 0.0.0.0 --port 8000 --reload
 
 volumes:
   postgres_data:
   redis_data:
   localstack_data:
+
 
 networks:
   default:

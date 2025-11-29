@@ -50,6 +50,7 @@ class UserResponse(BaseModel):
     id: UUID
     email: str
     full_name: str
+    profile_picture_url: Optional[str] = None
     is_active: bool
     is_verified: bool
     created_at: datetime

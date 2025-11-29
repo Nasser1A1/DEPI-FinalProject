@@ -25,6 +25,13 @@ class Settings(BaseSettings):
     access_token_expire_minutes: int = 15
     refresh_token_expire_days: int = 7
     
+    # AWS S3 Configuration
+    aws_access_key_id: str = "test"  # For LocalStack
+    aws_secret_access_key: str = "test"  # For LocalStack
+    aws_region: str = "us-east-1"
+    s3_bucket_name: str = "auth-service-images"
+    s3_endpoint_url: Optional[str] = "http://localhost:4566"  # LocalStack endpoint
+    
     # CORS
     cors_origins: list[str] = ["http://localhost:3000", "http://localhost:5173"]
     

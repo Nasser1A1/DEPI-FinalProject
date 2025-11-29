@@ -4,6 +4,7 @@ export interface User {
     id: string;
     email: string;
     full_name: string;
+    profile_picture_url?: string;
     created_at: string;
 }
 
@@ -108,6 +109,21 @@ class AuthService {
 
     isAuthenticated(): boolean {
         return !!sessionStorage.getItem('access_token');
+    }
+
+    async uploadProfilePicture(file: File): Promise<User> {
+        const formData = new FormData();
+        formData.append('file', file);
+
+        const response = await apiClient.put<User>('/api/auth/profile-picture', formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            },
+        });
+
+        // Update stored user
+        sessionStorage.setItem('user', JSON.stringify(response.data));
+        return response.data;
     }
 }
 
