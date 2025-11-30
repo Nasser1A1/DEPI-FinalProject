@@ -10,45 +10,6 @@ A production-ready, scalable e-commerce platform built with microservices archit
 
 ---
 
-## 🏗️ Architecture Overview
-
-This platform consists of **6 independent microservices**, each with its own database, following **Clean Architecture** and **SOLID principles**.
-
-```
-┌─────────────────────────────────────────────────────────────┐
-│                      API Gateway / Frontend                  │
-│                    (React + Tailwind CSS)                    │
-└─────────────────────────────────────────────────────────────┘
-                              │
-            ┌─────────────────┴─────────────────┐
-            │         Load Balancer              │
-            └────┬────┬────┬────┬────┬──────────┘
-                 │    │    │    │    │    │
-     ┌───────────┴┐ ┌─┴──┐ ┌┴───┐ ┌┴───┐ ┌┴───┐ ┌┴──────┐
-     │   Auth     │ │Prod│ │Cart│ │Pay │ │Anly│ │AI Srch│
-     │  Service   │ │Svc │ │Svc │ │Svc │ │Svc │ │  Svc  │
-     └──────┬─────┘ └┬───┘ └┬───┘ └┬───┘ └┬───┘ └┬──────┘
-            │        │      │      │      │      │
-     ┌──────┴─┐  ┌───┴─┐ ┌─┴──┐ ┌─┴──┐ ┌─┴──┐ ┌─┴────┐
-     │ Auth   │  │Prod │ │Cart│ │Pay │ │Anly│ │AI DB │
-     │   DB   │  │ DB  │ │ DB │ │ DB │ │ DB │ │(pgvec│
-     └────────┘  └─────┘ └────┘ └────┘ └────┘ └──────┘
-                              │
-                    ┌─────────┴──────────┐
-                    │   Redis (Cache &   │
-                    │   Message Queue)   │
-                    └────────────────────┘
-                              │
-                    ┌─────────┴──────────┐
-                    │  AWS S3 (Product   │
-                    │      Images)       │
-                    └────────────────────┘
-```
-
----
-
-## 📦 Microservices
-
 ### 1. **Authentication Service** (`auth-service`) ✅
 **Port:** 8001  
 **Database:** PostgreSQL (auth_db)
@@ -176,30 +137,6 @@ This platform consists of **6 independent microservices**, each with its own dat
 
 ---
 
-### 6. **AI Product Search Service** (`ai-search-service`) ⏳
-**Port:** 8006  
-**Database:** PostgreSQL with pgvector (ai_search_db)
-
-**Purpose:** Semantic search and price aggregation
-
-**Features:**
-- Semantic search using embeddings
-- Natural language query processing
-- Price comparison from multiple sources
-- Product recommendations
-- Similar product suggestions
-- Auto-indexing of new products
-
-**Endpoints:**
-- `GET /ai/search?query=...` - Semantic product search
-- `GET /ai/prices/{product_id}` - Aggregated price comparison
-- `POST /ai/index` - Index new product
-- `GET /ai/recommendations/{product_id}` - Similar products
-
-**Tech Stack:** FastAPI, PostgreSQL+pgvector, Sentence Transformers, Redis
-
----
-
 ## 🚀 Quick Start
 
 ### Prerequisites
@@ -232,7 +169,7 @@ docker-compose down
 - Cart Service: http://localhost:8003/docs
 - Payment Service: http://localhost:8004/docs
 - Analytics Service: http://localhost:8005/docs
-- AI Search Service: http://localhost:8006/docs
+- Order Service: http://localhost:8006/docs
 - Frontend: http://localhost:3000
 
 ---
@@ -391,7 +328,7 @@ ecommerce-platform/
 │   ├── cart-service/          📝 PLANNED
 │   ├── payment-service/       📝 PLANNED
 │   ├── analytics-service/     📝 PLANNED
-│   └── ai-search-service/     📝 PLANNED
+│   └── order-service/         📝 PLANNED
 ├── frontend/                  📝 PLANNED
 ├── shared/                    ✅ COMPLETE
 │   ├── auth_utils.py
@@ -433,7 +370,7 @@ ecommerce-platform/
 - [ ] Cart Service
 - [ ] Payment Service
 - [ ] Analytics Service
-- [ ] AI Search Service
+- [ ] Order Service
 - [ ] Frontend Application
 - [ ] E2E Tests
 - [ ] Deployment Documentation

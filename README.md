@@ -41,7 +41,6 @@ A comprehensive, production-ready e-commerce platform built with **microservices
 - **Cart Service** (0% done) - Shopping cart management
 - **Payment Service** (0% done) - Payment processing
 - **Analytics Service** (0% done) - Event tracking & insights
-- **AI Search Service** (0% done) - Semantic search with embeddings
 - **Frontend Application** (0% done) - React SPA
 
 ---
@@ -71,7 +70,7 @@ docker-compose logs -f
 - **Cart Service:** http://localhost:8003/docs
 - **Payment Service:** http://localhost:8004/docs 
 - **Analytics Service:** http://localhost:8005/docs
-- **AI Search Service:** http://localhost:8006/docs
+- **Order Service:** http://localhost:8006/docs
 
 ### Test Authentication
 
@@ -99,7 +98,7 @@ DEPI-FinalProject/
 │   ├── cart-service/          📝 Planned
 │   ├── payment-service/       📝 Planned
 │   ├── analytics-service/     📝 Planned
-│   └── ai-search-service/     📝 Planned
+│   └── order-service/         📝 Planned
 ├── frontend/                  📝 Planned
 ├── shared/                    ✅ Complete
 ├── docker-compose.yml         ✅ Complete
@@ -122,7 +121,7 @@ DEPI-FinalProject/
 | **Cart** | 8003 | PostgreSQL | Shopping Cart | 📝 Planned |
 | **Payment** | 8004 | PostgreSQL | Payment Processing | 📝 Planned |
 | **Analytics** | 8005 | PostgreSQL | Event Tracking | 📝 Planned |
-| **AI Search** | 8006 | PostgreSQL+pgvector | Semantic Search | 📝 Planned |
+| **Order** | 8006 | PostgreSQL | Order Management | 📝 Planned |
 
 ### Clean Architecture
 
@@ -218,7 +217,7 @@ docker-compose up -d
 
 ### Phase 3: Intelligence 📝 (Planned)
 - [ ] Analytics Service
-- [ ] AI Search Service
+- [ ] Order Service
 
 ### Phase 4: Frontend 📝 (Planned)
 - [ ] React application
