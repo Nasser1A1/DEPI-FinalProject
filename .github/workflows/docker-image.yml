@@ -7,9 +7,7 @@ on:
     branches: [ "development" ]
 
 jobs:
-
   build:
-
     runs-on: ubuntu-latest
     
     steps:
@@ -22,12 +20,14 @@ jobs:
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: ${{ secrets.AWS_REGION }}
         
+    - name: Login to Amazon ECR
+      uses: aws-actions/amazon-ecr-login@v2
+    
     - name: Make Script Executable 
-      run: chomd +x dockerBuilder.sh
-
+      run: chmod +x dockerBuilder.sh
       
     - name: Build and push Docker images
       env:
         AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
-        AWS_REGION: e${{ secrets.AWS_REGION }}
+        AWS_REGION: ${{ secrets.AWS_REGION }}
       run: ./dockerBuilder.sh
