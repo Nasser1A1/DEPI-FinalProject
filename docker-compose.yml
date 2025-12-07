@@ -223,6 +223,7 @@ services:
     environment:
       - VITE_API_URL=http://localhost
       - NODE_ENV=development
+      - VITE_DOCKER=true
     depends_on:
       postgres:
         condition: service_healthy
