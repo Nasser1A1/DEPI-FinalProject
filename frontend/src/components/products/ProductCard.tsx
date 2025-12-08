@@ -101,7 +101,7 @@ export default function ProductCard({ product, delay = 0 }: ProductCardProps) {
                         <div className="mt-4 flex items-center justify-between">
                             <div>
                                 <span className="text-2xl font-bold text-gray-900">
-                                    {formatPrice(product.price)}
+                                    {formatPrice(Number(product.price))}
                                 </span>
                                 {product.stock <= 5 && product.in_stock && (
                                     <p className="text-xs text-orange-600 font-medium mt-1">

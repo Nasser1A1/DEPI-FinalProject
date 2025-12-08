@@ -160,7 +160,7 @@ export default function AdminProductsPage() {
                                             </td>
                                             <td className="px-6 py-4">
                                                 <span className="font-semibold text-gray-900">
-                                                    {formatPrice(product.price)}
+                                                    {formatPrice(Number(product.price))}
                                                 </span>
                                             </td>
                                             <td className="px-6 py-4">
