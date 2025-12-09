@@ -7,14 +7,15 @@ on:
     branches: [ "development" ]
 
 jobs:
+  # -----------------------------
+  # Job 1: Build Docker Images
+  # -----------------------------
   build:
     runs-on: ubuntu-latest
 
     steps:
-      # 1. Checkout repo
       - uses: actions/checkout@v4
 
-      # 2. Configure AWS credentials
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
@@ -22,33 +23,36 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.AWS_REGION }}
 
-      # 3. Login to Amazon ECR
       - name: Login to Amazon ECR
         uses: aws-actions/amazon-ecr-login@v2
 
-      # 4. Make Docker build script executable
-      - name: Make Script Executable
+      - name: Make Docker build script executable
         run: chmod +x dockerBuilder.sh
 
-      # 5. Build and push Docker images
       - name: Build and push Docker images
         env:
           AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
           AWS_REGION: ${{ secrets.AWS_REGION }}
         run: ./dockerBuilder.sh
 
-      # 6. Setup SSH for CD
+  # -----------------------------
+  # Job 2: Deploy to k3s
+  # -----------------------------
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build  # deploy runs after build job completes successfully
+
+    steps:
       - name: Setup SSH
-        uses: webfactory/ssh-agent@v0.10.4
+        uses: webfactory/ssh-agent@v0.9.1
         with:
           ssh-private-key: ${{ secrets.EC2_SSH_KEY }}
 
-      # 7. Run deployment script on EC2
-      - name: Deploy to k3s
+      - name: Run deployment script on EC2
         run: |
           ssh -o StrictHostKeyChecking=no ubuntu@44.197.181.153 << 'EOF'
-            # Optional: pull latest manifests if using git on the server
             cd ~/deployment-script
+            # Optional: pull latest manifests if using git on the server
             # git pull origin development
 
             # Run the deployment script
