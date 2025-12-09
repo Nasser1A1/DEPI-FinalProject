@@ -19,7 +19,7 @@ build_and_push() {
   echo "Processing: $SERVICE_NAME"
 
   echo "Building Docker image..."
-  docker build -t "$SERVICE_NAME" "$SERVICE_PATH"
+  docker build -f "$SERVICE_PATH/Dockerfile.prod" -t "$SERVICE_NAME" "$SERVICE_PATH"
   
   echo "Tagging image..."
   docker tag "$SERVICE_NAME:latest" \
