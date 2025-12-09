@@ -51,10 +51,10 @@ jobs:
       - name: Run deployment script on EC2
         run: |
           ssh -o StrictHostKeyChecking=no ubuntu@44.197.181.153 << 'EOF'
-            cd ~/deployment-script
+            # cd ~/deployment-script
             # Optional: pull latest manifests if using git on the server
             # git pull origin development
 
             # Run the deployment script
-            bash ~/deployment.sh
+            bash ~/deployment-script/deployment.sh
           EOF
