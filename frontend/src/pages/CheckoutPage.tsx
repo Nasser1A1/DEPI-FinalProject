@@ -7,7 +7,9 @@ import { toast } from 'react-hot-toast';
 import Button from '@/components/ui/Button';
 import Input from '@/components/ui/Input';
 import { useCartStore } from '@/state/cart.store';
+import { useAuthStore } from '@/state/auth.store';
 import { paymentService } from '@/services/payment.service';
+import { orderService } from '@/services/order.service';
 
 interface CheckoutFormData {
   fullName: string;
@@ -21,6 +23,7 @@ interface CheckoutFormData {
 
 export default function CheckoutPage() {
   const navigate = useNavigate();
+  const { user } = useAuthStore();
   const { cart, isLoading, fetchCart, clearCart, error } = useCartStore();
   const { register, handleSubmit, formState: { errors } } = useForm<CheckoutFormData>({
     defaultValues: {
@@ -85,9 +88,11 @@ export default function CheckoutPage() {
     try {
       setProcessing(true);
 
+      const subtotal = Number(cart?.subtotal) || 0;
+
       // 1. Create Payment Intent
       const intent = await paymentService.createPaymentIntent({
-        amount: cart?.subtotal || 0,
+        amount: subtotal,
         currency: 'USD',
         cart_id: cart!.id,
         payment_method: data.paymentMethod,
@@ -103,7 +108,31 @@ export default function CheckoutPage() {
         payment_method_id: 'pm_card_visa' // Mock payment method
       });
 
-      // 3. Clear Cart & Show Success
+      // 3. Place Order
+      if (user && cart) {
+        await orderService.createOrder({
+          user_id: user.id,
+          items: cart.items.map(item => ({
+            product_id: item.product_id,
+            product_title: item.product_title || 'Unknown Product',
+            product_image: item.product_image || undefined,
+            quantity: item.quantity,
+            price: Number(item.price)
+          })),
+          total_amount: subtotal,
+          shipping_address: {
+            fullName: data.fullName,
+            email: data.email,
+            address: data.address,
+            city: data.city,
+            zipCode: data.zipCode,
+            country: data.country
+          },
+          payment_intent_id: intent.id
+        });
+      }
+
+      // 4. Clear Cart & Show Success
       await clearCart();
       setStep('success');
       toast.success('Order placed successfully!');
@@ -248,7 +277,7 @@ export default function CheckoutPage() {
                 isLoading={processing}
                 className="w-full md:w-auto px-8"
               >
-                {step === 'shipping' ? 'Continue to Payment' : `Pay $${(cart?.subtotal || 0).toFixed(2)}`}
+                {step === 'shipping' ? 'Continue to Payment' : `Pay $${(Number(cart?.subtotal) || 0).toFixed(2)}`}
               </Button>
             </div>
           </form>
@@ -272,7 +301,7 @@ export default function CheckoutPage() {
                   <div className="flex-1">
                     <h4 className="text-sm font-medium text-gray-900 line-clamp-1">{item.product_title}</h4>
                     <p className="text-sm text-gray-500">Qty: {item.quantity}</p>
-                    <p className="text-sm font-medium text-gray-900">${(item.total_price || 0).toFixed(2)}</p>
+                    <p className="text-sm font-medium text-gray-900">${(Number(item.total_price) || 0).toFixed(2)}</p>
                   </div>
                 </div>
               ))}
@@ -281,15 +310,15 @@ export default function CheckoutPage() {
             <div className="space-y-4 border-t border-gray-200 pt-4">
               <div className="flex justify-between text-gray-600">
                 <span>Subtotal</span>
-                <span>${(cart?.subtotal || 0).toFixed(2)}</span>
+                <span>${(Number(cart?.subtotal) || 0).toFixed(2)}</span>
               </div>
               <div className="flex justify-between text-gray-600">
                 <span>Shipping</span>
-                <span className="text-green-600 font-medium">Free</span>
+                <span className="text-green-600">Free</span>
               </div>
               <div className="flex justify-between text-lg font-bold text-gray-900 pt-2 border-t border-gray-200">
                 <span>Total</span>
-                <span>${(cart?.subtotal || 0).toFixed(2)}</span>
+                <span>${(Number(cart?.subtotal) || 0).toFixed(2)}</span>
               </div>
             </div>
           </div>

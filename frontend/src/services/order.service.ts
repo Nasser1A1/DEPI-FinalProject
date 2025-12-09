@@ -27,7 +27,7 @@ export interface Order {
 
 class OrderService {
     async createOrder(data: CreateOrderRequest): Promise<Order> {
-        const response = await apiClient.post<Order>('/api/orders', data);
+        const response = await apiClient.post<Order>('/api/orders/', data);
         return response.data;
     }
 

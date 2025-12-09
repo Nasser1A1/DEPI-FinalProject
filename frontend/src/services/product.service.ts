@@ -56,7 +56,7 @@ export interface ProductSearchParams {
 
 class ProductService {
     async getProducts(params?: ProductSearchParams): Promise<ProductListResponse> {
-        const response = await apiClient.get<ProductListResponse>('/api/products', { params });
+        const response = await apiClient.get<ProductListResponse>('/api/products/', { params });
         return response.data;
     }
 
@@ -93,7 +93,7 @@ class ProductService {
         product_metadata?: Record<string, any>;
         is_active?: boolean;
     }): Promise<Product> {
-        const response = await apiClient.post<Product>('/api/products', data);
+        const response = await apiClient.post<Product>('/api/products/', data);
         return response.data;
     }
 
