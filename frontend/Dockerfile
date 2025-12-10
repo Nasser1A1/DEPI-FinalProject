@@ -10,20 +10,20 @@ RUN npm install
 # Copy application code
 COPY . .
 
-# Build the app (إذا عندك build step زي Vite أو Next.js)
 RUN npm run build
 
 # ---------- Stage 2: Final ----------
-FROM node:18-alpine AS runtime
+FROM nginx:alpine
 
-WORKDIR /app
+# Copy built assets from builder stage
+COPY --from=builder /app/dist /usr/share/nginx/html
 
-# Copy built app and node_modules from build stage
-COPY --from=build /app /app
+# Copy custom NGINX configuration
+COPY nginx.conf /etc/nginx/conf.d/default.conf
 
-# Expose port
-EXPOSE 3000
+# Expose port 80
+EXPOSE 80
 
-# Start the app
-CMD ["npm", "run", "dev", "--", "--host", "0.0.0.0"]
+# Start NGINX
+CMD ["nginx", "-g", "daemon off;"]
 
