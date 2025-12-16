@@ -72,7 +72,8 @@ Thumbs.db
 *.key
 *.pem
 secrets.json
-
+*-secret.yaml
+*secret*
 # ----------------------------------------
 # Docker and build artifacts
 # ----------------------------------------

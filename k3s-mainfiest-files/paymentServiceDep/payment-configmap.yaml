@@ -1,0 +1,26 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: payment-config
+  namespace: default
+data:
+  SERVICE_NAME: "payment-service"
+  EMAIL_FROM : "mahmoud.elsharif@outlook.com"
+  PORT: "8005"
+  ENVIRONMENT: "development"
+  DEBUG: "True"
+  JWT_ALGORITHM: "HS256"
+  STRIPE_PUBLISHABLE_KEY: "pk_test_mock_key"
+  PAYPAL_CLIENT_ID: "mock_paypal_client_id"
+  PAYPAL_MODE: "sandbox"
+  CART_SERVICE_URL: "http://cart-service:8000"
+  AUTH_SERVICE_URL: "http://auth-service:8000"
+  PRODUCT_SERVICE_URL: "http://product-service:8000"
+  SMTP_HOST: "smtp.gmail.com"
+  SMTP_PORT: "587"
+  RATE_LIMIT_PER_MINUTE: "60"
+  RATE_LIMIT_PER_HOUR: "1000"
+  LOG_LEVEL: "INFO"
+  CURRENCY: "USD"
+  PAYMENT_TIMEOUT_MINUTES: "30"
+
