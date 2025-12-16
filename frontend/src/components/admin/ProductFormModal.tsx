@@ -26,7 +26,7 @@ export default function ProductFormModal({ product, onClose }: ProductFormModalP
         defaultValues: product ? {
             title: product.title,
             description: product.description || '',
-            price: product.price,
+            price: typeof product.price === 'string' ? parseFloat(product.price) : product.price,
             stock: product.stock,
             category_id: product.category_id || '',
             is_active: product.is_active,
@@ -183,6 +183,7 @@ export default function ProductFormModal({ product, onClose }: ProductFormModalP
                             error={errors.price?.message}
                             {...register('price', {
                                 required: 'Price is required',
+                                valueAsNumber: true,
                                 min: { value: 0.01, message: 'Price must be greater than 0' }
                             })}
                         />
@@ -194,6 +195,7 @@ export default function ProductFormModal({ product, onClose }: ProductFormModalP
                             error={errors.stock?.message}
                             {...register('stock', {
                                 required: 'Stock is required',
+                                valueAsNumber: true,
                                 min: { value: 0, message: 'Stock cannot be negative' }
                             })}
                         />

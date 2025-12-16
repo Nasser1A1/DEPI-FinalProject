@@ -23,7 +23,12 @@ class Settings(BaseSettings):
     jwt_algorithm: str = "HS256"
     
     # CORS
-    cors_origins: list[str] = ["http://localhost:3000", "http://localhost:5173"]
+    cors_origins: list[str] = [
+        "http://localhost:3000", 
+        "http://localhost:5173",
+        "http://frontend:3000",
+        "http://0.0.0.0:3000"
+    ]
     
     # Rate Limiting
     rate_limit_enabled: bool = True

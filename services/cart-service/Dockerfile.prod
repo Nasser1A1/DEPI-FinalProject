@@ -1,0 +1,54 @@
+############### STAGE 1: BUILDER #################
+FROM python:3.11-slim AS builder
+
+ENV PIP_NO_CACHE_DIR=1 \
+    PIP_DISABLE_PIP_VERSION_CHECK=1 \
+    PATH="/root/.local/bin:$PATH"
+
+WORKDIR /app
+
+# Install build tools ONLY in builder
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends gcc build-essential \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY requirements.txt .
+
+# Build wheels for all dependencies
+RUN pip install --upgrade pip \
+    && pip wheel --wheel-dir /wheels -r requirements.txt
+
+
+############### STAGE 2: FINAL IMAGE #################
+FROM python:3.11-slim AS final
+
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    PATH="/home/appuser/.local/bin:$PATH"
+
+WORKDIR /app
+
+# Install minimal runtime dependencies (no gcc)
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends wget \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy wheels and install
+COPY --from=builder /wheels /wheels
+RUN pip install /wheels/*
+
+# Copy application source
+COPY --chown=1000:1000 . .
+
+# Create non-root user
+RUN useradd -m -u 1000 appuser
+USER appuser
+
+EXPOSE 8000
+
+# Healthcheck (lightweight)
+HEALTHCHECK --interval=30s --timeout=3s --start-period=20s --retries=3 \
+    CMD wget -qO- http://localhost:8000/health || exit 1
+
+# Start FastAPI with Uvicorn
+CMD ["uvicorn", "src.main:app", "--host", "0.0.0.0", "--port", "8000"]

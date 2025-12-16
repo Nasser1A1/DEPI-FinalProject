@@ -26,7 +26,7 @@ app.add_middleware(
 )
 
 # Routes
-app.include_router(orders.router, prefix="/api/orders", tags=["Orders"])
+app.include_router(orders.router, prefix="/orders", tags=["Orders"])
 
 @app.get("/health")
 async def health_check():

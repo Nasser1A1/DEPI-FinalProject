@@ -11,11 +11,12 @@ export function cn(...inputs: ClassValue[]) {
 /**
  * Format price with currency symbol
  */
-export function formatPrice(price: number, currency = 'USD'): string {
+export function formatPrice(price: number | string, currency = 'USD'): string {
+    const numPrice = typeof price === 'string' ? parseFloat(price) : price;
     return new Intl.NumberFormat('en-US', {
         style: 'currency',
         currency,
-    }).format(price);
+    }).format(numPrice);
 }
 
 /**
